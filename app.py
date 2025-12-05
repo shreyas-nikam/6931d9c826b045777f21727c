@@ -1,1 +1,76 @@
-# Starter Python file
+
+import streamlit as st
+st.set_page_config(page_title="QuLab - Explainable Credit Scoring", layout="wide")
+st.sidebar.image("https://www.quantuniversity.com/assets/img/logo5.jpg")
+st.sidebar.divider()
+st.title("QuLab: Explainable Credit Scoring")
+st.divider()
+
+st.markdown("""
+In this lab, you step into the shoes of a **Quantitative Analyst** at a leading financial institution.
+Your institution is facing increased regulatory scrutiny regarding its automated credit decision-making process.
+Specifically, there's a demand for greater transparency, especially concerning rejected loan applications.
+
+Your mission is to leverage **Explainable AI (XAI)** techniques to justify loan application outcomes.
+This application will guide you through an end-to-end workflow:
+
+1.  **Inspect Data**: Understand the historical loan application data.
+2.  **Train Model**: Develop a credit scoring model that makes the loan decisions.
+3.  **Identify Critical Cases**: Pinpoint specific rejected applications that require in-depth explanation.
+4.  **LIME Explanation**: Apply LIME to understand local reasons for a single rejection.
+5.  **LIME Visualization**: Visualize the LIME insights for clarity.
+6.  **SHAP Explanation**: Apply SHAP for a more robust local explanation.
+7.  **SHAP Visualization**: Generate SHAP force and dependence plots.
+8.  **Explanation Synthesis**: Compile all insights into human-readable explanations and adverse action notices.
+9.  **Global Insights**: Analyze overall model behavior with global SHAP plots.
+
+This narrative will equip you with the practical skills to transform complex AI model outputs into understandable, defensible, and compliant explanations,
+ultimately building trust in AI systems within the highly regulated financial industry.
+""")
+
+page = st.sidebar.selectbox(
+    label="Navigation", 
+    options=[
+        "Home", 
+        "Data Inspection", 
+        "Model Training", 
+        "Case Identification", 
+        "LIME Explanation", 
+        "LIME Visualization",
+        "SHAP Explanation", 
+        "SHAP Visualization",
+        "Explanation Synthesis",
+        "Global Insights"
+    ]
+)
+
+if page == "Home":
+    from application_pages.page_1_home import main
+    main()
+elif page == "Data Inspection":
+    from application_pages.page_2_data_inspection import main
+    main()
+elif page == "Model Training":
+    from application_pages.page_3_model_training import main
+    main()
+elif page == "Case Identification":
+    from application_pages.page_4_case_identification import main
+    main()
+elif page == "LIME Explanation":
+    from application_pages.page_5_lime_explanation import main
+    main()
+elif page == "LIME Visualization":
+    from application_pages.page_6_lime_visualization import main
+    main()
+elif page == "SHAP Explanation":
+    from application_pages.page_7_shap_explanation import main
+    main()
+elif page == "SHAP Visualization":
+    from application_pages.page_8_shap_visualization import main
+    main()
+elif page == "Explanation Synthesis":
+    from application_pages.page_9_explanation_synthesis import main
+    main()
+elif page == "Global Insights":
+    from application_pages.page_10_global_insights import main
+    main()
