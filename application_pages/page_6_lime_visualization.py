@@ -3,6 +3,8 @@ import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
+import numpy as np
+
 
 def main():
     st.markdown(
@@ -23,15 +25,18 @@ def main():
     )
 
     if "selected_rejected_cases" not in st.session_state or not st.session_state["selected_rejected_cases"]:
-        st.warning("Please go to 'Case Identification' to select at least one rejected application first.")
+        st.warning(
+            "Please go to 'Case Identification' to select at least one rejected application first.")
         return
 
     st.subheader("Visualize LIME Explanation for a Case")
 
     # Allow selecting one case for LIME visualization
-    case_options = {f"Applicant ID: {idx}": idx for idx in st.session_state["selected_rejected_cases"]}
+    case_options = {
+        f"Applicant ID: {idx}": idx for idx in st.session_state["selected_rejected_cases"]}
     if not case_options:
-        st.warning("No rejected cases with LIME explanations found. Please generate LIME explanations first.")
+        st.warning(
+            "No rejected cases with LIME explanations found. Please generate LIME explanations first.")
         return
 
     selected_case_id_str = st.selectbox(
@@ -42,7 +47,8 @@ def main():
     selected_case_id = case_options[selected_case_id_str]
 
     if f"lime_explanation_{selected_case_id}" not in st.session_state:
-        st.warning(f"LIME explanation for Applicant ID {selected_case_id} not found. Please generate it on the 'LIME Explanation' page first.")
+        st.warning(
+            f"LIME explanation for Applicant ID {selected_case_id} not found. Please generate it on the 'LIME Explanation' page first.")
         return
 
     lime_explanation_list = st.session_state[f"lime_explanation_{selected_case_id}"]
@@ -65,10 +71,11 @@ def main():
     ax.barh(lime_df["Feature"], lime_df["Weight"], color=colors)
     ax.set_xlabel("Contribution to Prediction")
     ax.set_ylabel("Feature")
-    ax.set_title(f"LIME Feature Contributions for Applicant ID {selected_case_id}")
+    ax.set_title(
+        f"LIME Feature Contributions for Applicant ID {selected_case_id}")
     ax.axvline(0, color="grey", linestyle="--")
     st.pyplot(fig)
-    plt.close(fig) # Close the plot to prevent display issues
+    plt.close(fig)  # Close the plot to prevent display issues
 
     st.markdown(
         """
@@ -78,4 +85,3 @@ def main():
         fulfilling the need for transparent communication.
         """
     )
-

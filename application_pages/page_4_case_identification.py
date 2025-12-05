@@ -3,6 +3,7 @@ import streamlit as st
 import pandas as pd
 from utils import identify_critical_applications
 
+
 def main():
     st.markdown(
         """
@@ -39,20 +40,61 @@ def main():
         For instance, if the predicted probability of approval $P(	ext{Approved})$ falls below this threshold, the application is considered for rejection.
         """
     )
-    
+
     prediction_threshold = st.slider(
         "Select Probability Threshold for Rejection (P(Approved) < threshold)",
         min_value=0.0, max_value=1.0, value=0.5, step=0.05,
         key="rejection_threshold"
     )
 
-    rejected_cases = identify_critical_applications(loan_data, model, features, threshold=prediction_threshold)
+    rejected_cases = identify_critical_applications(
+        loan_data, model, features, threshold=prediction_threshold)
 
     if not rejected_cases.empty:
-        st.subheader(f"Rejected Applications (P(Approved) < {prediction_threshold:.2f})")
+        st.subheader(
+            f"Rejected Applications (P(Approved) < {prediction_threshold:.2f})")
         st.markdown("Select individual cases below for detailed XAI analysis.")
 
         # Display rejected cases for selection
         selected_indices = []
-        for i, row in rejected_cases.head(10).iterrows(): # Show top 10 rejected for selection
-            checkbox_label = f"Applicant ID: {i} - P(Approved): {row[
+        # Show top 10 rejected for selection
+        for i, row in rejected_cases.head(10).iterrows():
+            if st.checkbox(f"Applicant ID: {i} - P(Approved): {row['predicted_probability']:.4f}", key=f"select_case_{i}"):
+                selected_indices.append(i)
+
+        st.session_state["selected_rejected_cases"] = selected_indices
+
+        if selected_indices:
+            st.success(
+                f"Selected {len(selected_indices)} case(s) for detailed analysis.")
+            st.markdown("**Selected Applicant IDs:** " +
+                        ", ".join([f"`{idx}`" for idx in selected_indices]))
+        else:
+            st.info(
+                "Please select at least one case to proceed with LIME and SHAP analysis.")
+
+        # Display full rejected cases table for reference
+        st.markdown("---")
+        st.subheader("All Rejected Applications (Top 20)")
+        st.dataframe(rejected_cases.head(20))
+
+        st.markdown(
+            """
+            **How the underlying concept or AI method supports this action:**
+            
+            Case identification is a crucial step in the explainability workflow. By focusing on rejected applications,
+            especially those with specific probability ranges, we can:
+            
+            - **Prioritize High-Impact Cases:** Focus on applications near the decision boundary where explanations are most valuable
+            - **Manage Regulatory Inquiries:** Quickly identify and explain specific cases flagged by regulators or customers
+            - **Detect Patterns:** Analyze common characteristics among rejected applications to identify potential biases
+            - **Resource Allocation:** Concentrate analytical efforts on cases that matter most
+            
+            The predicted probability $P(\\text{Approved})$ provides a measure of the model's confidence. Cases with very low
+            probabilities are clear rejections, while those closer to the threshold may warrant additional review.
+            
+            **Next Steps:** Navigate to "LIME Explanation" to generate local explanations for your selected cases.
+            """
+        )
+    else:
+        st.info("No rejected cases found for the selected threshold.")

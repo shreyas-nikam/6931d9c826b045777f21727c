@@ -3,6 +3,7 @@ import streamlit as st
 import pandas as pd
 from utils import generate_synthetic_data
 
+
 def main():
     st.markdown(
         """
@@ -22,17 +23,17 @@ def main():
 
     if "loan_data" not in st.session_state:
         st.session_state["loan_data"] = None
-    
+
     st.subheader("Load Loan Application Data")
-    
+
     col1, col2 = st.columns(2)
     with col1:
         if st.button("Generate Synthetic Data"):
             st.session_state["loan_data"] = generate_synthetic_data()
             st.success("Synthetic data generated successfully!")
-    with col2:
-        # Placeholder for file uploader - not implementing actual file upload for this exercise
-        st.info("File upload feature will be enabled in future versions for real data.")
+    # with col2:
+    #     # Placeholder for file uploader - not implementing actual file upload for this exercise
+    #     st.info("File upload feature will be enabled in future versions for real data.")
         # uploaded_file = st.file_uploader("Upload CSV", type=["csv"])
         # if uploaded_file is not None:
         #     st.session_state["loan_data"] = pd.read_csv(uploaded_file)
@@ -44,9 +45,10 @@ def main():
 
         st.subheader("Data Description")
         st.write(st.session_state["loan_data"].describe())
-        
+
         st.subheader("Loan Approval Distribution")
-        approval_counts = st.session_state["loan_data"]["loan_approved"].value_counts().rename(index={0: "Rejected", 1: "Approved"})
+        approval_counts = st.session_state["loan_data"]["loan_approved"].value_counts(
+        ).rename(index={0: "Rejected", 1: "Approved"})
         st.bar_chart(approval_counts)
 
         st.markdown(
@@ -58,4 +60,3 @@ def main():
         )
     else:
         st.info("Please generate or upload data to proceed.")
-

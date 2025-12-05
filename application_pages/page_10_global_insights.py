@@ -4,6 +4,7 @@ import pandas as pd
 import shap
 import matplotlib.pyplot as plt
 
+
 def main():
     st.markdown(
         """
@@ -27,7 +28,8 @@ def main():
         st.warning("Please go to 'Model Training' to train a model first.")
         return
     if "X_train" not in st.session_state or st.session_state["X_train"] is None:
-        st.warning("Training data (X_train) not found in session state. Please retrain the model.")
+        st.warning(
+            "Training data (X_train) not found in session state. Please retrain the model.")
         return
 
     st.subheader("Global Feature Importance with SHAP Summary Plot")
@@ -58,20 +60,31 @@ def main():
 
             # Assuming binary classification, we care about the positive class (index 1)
             if isinstance(shap_values_global, list):
-                shap_values_for_plot = shap_values_global[1] # For the "Approved" class
+                # For the "Approved" class
+                shap_values_for_plot = shap_values_global[1]
             else:
                 shap_values_for_plot = shap_values_global
-            
+
             st.session_state["global_shap_values"] = shap_values_for_plot
-            st.session_state["global_shap_data"] = X_train # Store data used for these SHAP values
+            # Store data used for these SHAP values
+            st.session_state["global_shap_data"] = X_train
             st.success("Global SHAP values calculated!")
 
     if "global_shap_values" in st.session_state and "global_shap_data" in st.session_state:
         st.subheader("Overall Feature Impact")
-        fig_summary, ax_summary = plt.subplots(figsize=(10, 8))
-        shap.summary_plot(st.session_state["global_shap_values"], st.session_state["global_shap_data"], feature_names=features, show=False)
-        st.pyplot(fig_summary)
-        plt.close(fig_summary)
+        # SHAP summary_plot creates its own figure, so we don't need to create one
+        plt.figure(figsize=(10, 8))
+        shap.summary_plot(st.session_state["global_shap_values"], st.session_state["global_shap_data"],
+                          feature_names=features, show=False, plot_type="dot")
+
+        # Add explanatory text as a legend
+        fig = plt.gcf()
+        fig.text(0.02, 0.98,
+                 "Legend:\n• Each dot = one instance\n• X-axis = SHAP value (impact on approval)\n• Color = Feature value (red=high, blue=low)\n• Position = Feature importance (top=most important)",
+                 fontsize=9, verticalalignment='top', bbox=dict(boxstyle='round', facecolor='wheat', alpha=0.3))
+
+        st.pyplot(fig)  # Get current figure
+        plt.clf()  # Clear the figure
 
         st.markdown(
             """
@@ -81,4 +94,3 @@ def main():
             and for regulators who require a high-level understanding of model drivers.
             """
         )
-
