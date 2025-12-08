@@ -3,6 +3,16 @@ import streamlit as st
 
 
 def main():
+
+    st.markdown("""
+In this lab, you step into the shoes of a **Quantitative Analyst** at a leading financial institution.
+Your institution is facing increased regulatory scrutiny regarding its automated credit decision-making process.
+Specifically, there's a demand for greater transparency, especially concerning rejected loan applications.
+
+Your mission is to leverage **Explainable AI (XAI)** techniques to justify loan application outcomes.
+Navigate through each page to complete the workflow and test your knowledge with the final quiz!
+""")
+
     st.markdown(
         """
         # Navigating Regulatory Scrutiny: Explaining Credit Decisions with AI

@@ -1,27 +1,20 @@
 
 import streamlit as st
-st.set_page_config(page_title="QuLab - Explainable Credit Scoring", layout="wide")
+st.set_page_config(
+    page_title="QuLab - Explainable Credit Scoring", layout="wide")
 st.sidebar.image("https://www.quantuniversity.com/assets/img/logo5.jpg")
 st.sidebar.divider()
 st.title("QuLab: Explainable Credit Scoring")
 st.divider()
 
-st.markdown("""
-In this lab, you step into the shoes of a **Quantitative Analyst** at a leading financial institution.
-Your institution is facing increased regulatory scrutiny regarding its automated credit decision-making process.
-Specifically, there's a demand for greater transparency, especially concerning rejected loan applications.
-
-Your mission is to leverage **Explainable AI (XAI)** techniques to justify loan application outcomes.
-Navigate through each page to complete the workflow and test your knowledge with the final quiz!
-""")
 
 page = st.sidebar.selectbox(
-    label="Navigation", 
+    label="Navigation",
     options=[
-        "Data Inspection", 
-        "Model Training", 
-        "Case Identification", 
-        "LIME Explanation & Visualization", 
+        "Data Inspection",
+        "Model Training",
+        "Case Identification",
+        "LIME Explanation & Visualization",
         "SHAP Explanation & Visualization",
         "Explanation Synthesis",
         "Global Insights",
