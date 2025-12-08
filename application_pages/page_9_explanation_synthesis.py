@@ -3,6 +3,7 @@ import streamlit as st
 import pandas as pd
 from utils import generate_human_readable_explanation, create_adverse_action_notice
 
+
 def main():
     st.markdown(
         """
@@ -20,7 +21,8 @@ def main():
     )
 
     if "selected_rejected_cases" not in st.session_state or not st.session_state["selected_rejected_cases"]:
-        st.warning("Please go to 'Case Identification' to select at least one rejected application first.")
+        st.warning(
+            "Please go to 'Case Identification' to select at least one rejected application first.")
         return
     if "loan_data" not in st.session_state or st.session_state["loan_data"] is None:
         st.warning("Please go to 'Data Inspection' to load the loan data first.")
@@ -28,7 +30,8 @@ def main():
 
     st.subheader("Synthesize Explanations for a Rejected Case")
 
-    case_options = {f"Applicant ID: {idx}": idx for idx in st.session_state["selected_rejected_cases"]}
+    case_options = {
+        f"Applicant ID: {idx}": idx for idx in st.session_state["selected_rejected_cases"]}
     if not case_options:
         st.warning("No rejected cases selected for explanation synthesis.")
         return
@@ -42,10 +45,12 @@ def main():
 
     application_data = st.session_state["loan_data"].loc[selected_case_id]
 
-    st.markdown(f"**Application Details for Applicant ID:** `{selected_case_id}`")
+    st.markdown(
+        f"**Application Details for Applicant ID:** `{selected_case_id}`")
     st.dataframe(application_data.to_frame().T)
 
-    lime_exp = st.session_state.get(f"lime_explanation_{selected_case_id}", None)
+    lime_exp = st.session_state.get(
+        f"lime_explanation_{selected_case_id}", None)
     shap_exp = None
     if f"shap_values_{selected_case_id}" in st.session_state:
         shap_exp = pd.DataFrame({
@@ -55,14 +60,33 @@ def main():
 
     st.markdown("---")
     st.subheader("Review Explanations (LIME & SHAP)")
-    
+
     if lime_exp:
-        st.markdown("#### LIME Insights:")
+        st.markdown("#### LIME Insights (Factors Affecting This Decision):")
+        st.markdown(
+            "*Each factor shows how much it influenced the approval decision:*")
         for feature, weight in lime_exp:
-            st.write(f"- `{feature}`: `{weight:.4f}`")
+            # Convert technical feature names to readable format
+            readable_feature = feature.replace('_', ' ').title()
+
+            # Interpret the weight in layman's terms
+            if weight < 0:
+                impact = "decreased approval chances"
+                strength = "strongly" if abs(weight) > 0.1 else "moderately" if abs(
+                    weight) > 0.05 else "slightly"
+                emoji = "🔴"
+            else:
+                impact = "increased approval chances"
+                strength = "strongly" if weight > 0.1 else "moderately" if weight > 0.05 else "slightly"
+                emoji = "🟢"
+
+            st.write(
+                f"**{readable_feature}**: This factor {strength} {impact} (impact score: {weight:.3f})")
+
+        st.markdown("*💡 **Understanding the scores**: Negative scores work against approval, while positive scores support it. Larger absolute values mean stronger influence.*")
     else:
         st.info("No LIME explanation found for this case. Please generate it on the 'LIME Explanation & Visualization' page.")
-    
+
     if shap_exp is not None:
         st.markdown("#### SHAP Insights:")
         st.dataframe(shap_exp)
@@ -79,26 +103,31 @@ def main():
     )
 
     if st.button("Generate Final Explanation & Adverse Action Notice", key="generate_final_explanation_button"):
-        with st.spinner("Generating synthesized explanation..."):            
-            final_explanation = generate_human_readable_explanation(application_data, lime_explanation=lime_exp, shap_explanation=shap_exp)
+        with st.spinner("Generating synthesized explanation..."):
+            final_explanation = generate_human_readable_explanation(
+                application_data, lime_explanation=lime_exp, shap_explanation=shap_exp)
             if custom_comments:
                 final_explanation += f"\n\n**Analyst's Additional Comments:**\n{custom_comments}"
 
             st.session_state[f"final_explanation_{selected_case_id}"] = final_explanation
-            
+
             # Generate Adverse Action Notice
-            adverse_notice = create_adverse_action_notice(application_data, final_explanation)
+            adverse_notice = create_adverse_action_notice(
+                application_data, final_explanation)
             st.session_state[f"adverse_action_notice_{selected_case_id}"] = adverse_notice
-            
+
             st.success("Explanation and Adverse Action Notice generated!")
 
     if f"final_explanation_{selected_case_id}" in st.session_state:
-        st.subheader(f"Synthesized Explanation for Applicant ID: {selected_case_id}")
+        st.subheader(
+            f"Synthesized Explanation for Applicant ID: {selected_case_id}")
         st.markdown(st.session_state[f"final_explanation_{selected_case_id}"])
 
-        st.subheader(f"Adverse Action Notice for Applicant ID: {selected_case_id}")
-        st.markdown(st.session_state[f"adverse_action_notice_{selected_case_id}"])
-        
+        st.subheader(
+            f"Adverse Action Notice for Applicant ID: {selected_case_id}")
+        st.markdown(
+            st.session_state[f"adverse_action_notice_{selected_case_id}"])
+
         st.download_button(
             label="Download Explanation as Text",
             data=st.session_state[f"final_explanation_{selected_case_id}"],

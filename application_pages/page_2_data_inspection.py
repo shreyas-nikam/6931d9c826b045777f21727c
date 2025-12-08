@@ -59,4 +59,4 @@ def main():
             """
         )
     else:
-        st.info("Please generate or upload data to proceed.")
+        st.info("Please generate data to proceed.")

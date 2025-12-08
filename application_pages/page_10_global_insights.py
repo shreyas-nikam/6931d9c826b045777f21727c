@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 def main():
     st.markdown(
         """
-        # Step 7: Global Insights - Understanding Overall Feature Impact
+        # Step 9: Global Insights - Understanding Overall Feature Impact
 
         While individual explanations (LIME and SHAP for specific cases) are crucial for justifying single decisions,
         as a Quant Analyst, you also need to understand the *overall* behavior of the credit scoring model.
@@ -72,33 +72,19 @@ def main():
 
     if "global_shap_values" in st.session_state and "global_shap_data" in st.session_state:
         st.subheader("Overall Feature Impact")
-        
-        # Call SHAP summary plot with size control
-        shap.summary_plot(
-            st.session_state["global_shap_values"], 
-            st.session_state["global_shap_data"],
-            feature_names=features, 
-            show=False, 
-            plot_type="dot",
-            plot_size=(10, 6)  # Slightly taller to accommodate labels
-        )
-        
-        # Get the figure and adjust spacing to prevent cutoff
-        fig = plt.gcf()
-        plt.subplots_adjust(bottom=0.2, top=0.88, left=0.15, right=0.95)  # More bottom space for xlabel
-        
-        # Add explanatory text as a legend - positioned to not overlap
-        plt.text(
-            0.02, 0.98,
-            "Legend: Each dot = one instance | X-axis = SHAP value | Color = Feature value (red=high, blue=low)",
-            transform=fig.transFigure,
-            fontsize=6.5, 
-            verticalalignment='top', 
-            bbox=dict(boxstyle='round', facecolor='wheat', alpha=0.3)
-        )
+        # SHAP summary_plot creates its own figure, so we don't need to create one
+        plt.figure(figsize=(10, 8))
+        shap.summary_plot(st.session_state["global_shap_values"], st.session_state["global_shap_data"],
+                          feature_names=features, show=False, plot_type="dot")
 
-        st.pyplot(fig, use_container_width=False)
-        plt.close('all')
+        # Add explanatory text as a legend
+        fig = plt.gcf()
+        fig.text(0.02, 0.98,
+                 "Legend:\n• Each dot = one instance\n• X-axis = SHAP value (impact on approval)\n• Color = Feature value (red=high, blue=low)\n• Position = Feature importance (top=most important)",
+                 fontsize=9, verticalalignment='top', bbox=dict(boxstyle='round', facecolor='wheat', alpha=0.3))
+
+        st.pyplot(fig)  # Get current figure
+        plt.clf()  # Clear the figure
 
         st.markdown(
             """

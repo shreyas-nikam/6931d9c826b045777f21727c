@@ -27,17 +27,10 @@ def main():
 
     st.subheader("Train Credit Scoring Model")
 
-    # In a real scenario, more options would be available
-    model_options = ["Random Forest Classifier"]
-    selected_model = st.selectbox(
-        label="Select Model Type",
-        options=model_options,
-        index=model_options.index("Random Forest Classifier"),
-        key="model_selection"
-    )
+    st.markdown("**Model Type:** Random Forest Classifier")
 
     if st.button("Train Model", key="train_model_button"):
-        with st.spinner(f"Training {selected_model}... This may take a moment."):
+        with st.spinner("Training Random Forest Classifier... This may take a moment."):
             model, features, X_train, accuracy = train_credit_model(
                 st.session_state["loan_data"])
             st.session_state["credit_model"] = model
@@ -45,12 +38,12 @@ def main():
             # Store for LIME/SHAP explainers
             st.session_state["X_train"] = X_train
             st.session_state["model_accuracy"] = accuracy
-            st.success(f"{selected_model} trained successfully!")
+            st.success("Random Forest Classifier trained successfully!")
             st.write(f"Model Accuracy: {accuracy:.2f}")
 
     if "credit_model" in st.session_state and st.session_state["credit_model"] is not None:
         st.subheader("Trained Model Summary")
-        st.markdown(f"**Model Type:** `{selected_model}`")
+        st.markdown("**Model Type:** Random Forest Classifier")
         st.markdown(
             f"**Accuracy on Test Set:** `{st.session_state['model_accuracy']:.2f}`")
         st.markdown(
