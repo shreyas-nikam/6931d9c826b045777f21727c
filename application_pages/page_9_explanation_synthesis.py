@@ -6,7 +6,7 @@ from utils import generate_human_readable_explanation, create_adverse_action_not
 def main():
     st.markdown(
         """
-        # Step 8: Explanation Synthesis - Crafting Human-Readable Justifications
+        # Step 6: Explanation Synthesis - Crafting Human-Readable Justifications
 
         The ultimate goal of explainable AI in a financial context is to translate technical insights into clear, actionable, and human-readable explanations.
         As a Quant Analyst, you must be able to synthesize the LIME and SHAP findings into coherent narratives for regulators, internal stakeholders, and even the applicants themselves.
@@ -61,13 +61,13 @@ def main():
         for feature, weight in lime_exp:
             st.write(f"- `{feature}`: `{weight:.4f}`")
     else:
-        st.info("No LIME explanation found for this case. Please generate it on the 'LIME Explanation' page.")
+        st.info("No LIME explanation found for this case. Please generate it on the 'LIME Explanation & Visualization' page.")
     
     if shap_exp is not None:
         st.markdown("#### SHAP Insights:")
         st.dataframe(shap_exp)
     else:
-        st.info("No SHAP explanation found for this case. Please generate it on the 'SHAP Explanation' page.")
+        st.info("No SHAP explanation found for this case. Please generate it on the 'SHAP Explanation & Visualization' page.")
 
     st.markdown("---")
     st.subheader("Craft Your Human-Readable Explanation")

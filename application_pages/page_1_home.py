@@ -34,22 +34,16 @@ def main():
         ### 3. **Case Identification**
         Identify critical rejected loan applications that require detailed explanation. Filter cases based on probability thresholds to focus on borderline or high-risk rejections.
 
-        ### 4. **LIME Explanation**
-        Apply **LIME (Local Interpretable Model-agnostic Explanations)** to understand why a specific application was rejected. LIME provides local, instance-level explanations by approximating the model's behavior around a single prediction.
+        ### 4. **LIME Explanation & Visualization**
+        Apply **LIME (Local Interpretable Model-agnostic Explanations)** to understand why a specific application was rejected. LIME provides local, instance-level explanations by approximating the model's behavior around a single prediction. Visualize these insights through intuitive bar charts showing feature contributions.
 
-        ### 5. **LIME Visualization**
-        Visualize LIME results through intuitive bar charts showing feature contributions. See which factors (credit score, income, debt ratios) most influenced the rejection decision.
+        ### 5. **SHAP Explanation & Visualization**
+        Use **SHAP (SHapley Additive exPlanations)** for theoretically grounded, consistent local explanations. Generate SHAP force plots (waterfall visualizations) and dependence plots to reveal feature interactions and impacts. These visualizations help you understand not just what features matter, but how they interact.
 
-        ### 6. **SHAP Explanation**
-        Use **SHAP (SHapley Additive exPlanations)** for theoretically grounded, consistent local explanations. SHAP values provide a game-theoretic approach to feature attribution, offering robust insights into individual predictions.
-
-        ### 7. **SHAP Visualization**
-        Generate SHAP force plots (waterfall visualizations) and dependence plots to reveal feature interactions and impacts. These visualizations help you understand not just what features matter, but how they interact.
-
-        ### 8. **Explanation Synthesis**
+        ### 6. **Explanation Synthesis**
         Combine LIME and SHAP insights into human-readable explanations. Draft formal **Adverse Action Notices** that meet regulatory requirements while remaining understandable to customers.
 
-        ### 9. **Global Insights**
+        ### 7. **Global Insights**
         Analyze overall model behavior using SHAP summary plots. Understand which features are most influential across all predictions, identifying potential biases or systemic patterns.
 
         ## Why This Matters

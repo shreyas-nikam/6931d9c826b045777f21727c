@@ -93,7 +93,7 @@ def main():
             The predicted probability $P(\\text{Approved})$ provides a measure of the model's confidence. Cases with very low
             probabilities are clear rejections, while those closer to the threshold may warrant additional review.
             
-            **Next Steps:** Navigate to "LIME Explanation" to generate local explanations for your selected cases.
+            **Next Steps:** Navigate to "LIME Explanation & Visualization" to generate local explanations for your selected cases.
             """
         )
     else:

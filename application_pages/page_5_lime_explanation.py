@@ -1,21 +1,21 @@
 
 import streamlit as st
 import pandas as pd
+import matplotlib.pyplot as plt
 from utils import explain_with_lime
 
 def main():
     st.markdown(
         """
-        # Step 4: LIME Explanation - Understanding Local Decisions
+        # Step 4: LIME Explanation & Visualization - Understanding Local Decisions
 
         As a Quant Analyst, when faced with a specific rejected loan application, one of your primary tools for explanation is LIME (Local Interpretable Model-agnostic Explanations).
         LIME helps you understand *why* a black-box model made a particular prediction for a single instance by approximating it with an interpretable local model.
 
-        **What you're trying to achieve:** Generate a localized explanation for a chosen rejected loan application, identifying the key features that drove its individual rejection.
-        This insight is crucial for providing specific feedback to applicants or defending a decision to regulators.
+        **What you're trying to achieve:** Generate a localized explanation for a chosen rejected loan application, identifying the key features that drove its individual rejection,
+        and visualize these insights for effective communication.
 
-        **How this page helps:** You will select a specific rejected case and trigger a LIME analysis. The output will highlight the features that were most influential
-        in the model's decision for that particular applicant, providing a concrete, case-by-case rationale.
+        **How this page helps:** You will select a specific rejected case, trigger a LIME analysis, and see both numerical and visual representations of feature contributions.
         """
     )
 
@@ -56,6 +56,9 @@ def main():
 
     if f"lime_explanation_{selected_case_id}" in st.session_state:
         st.subheader(f"LIME Explanation for Applicant ID: {selected_case_id}")
+        
+        # Display numerical explanation
+        st.markdown("#### Feature Importance Scores")
         st.markdown(
             r"""
             **Interpreting LIME Output:** The list below shows features that are locally important for this specific decision.
@@ -63,14 +66,43 @@ def main():
             A positive weight suggests it pushes towards "Approved", while a negative weight pushes towards "Rejected".
             """
         )
-        for feature, weight in st.session_state[f"lime_explanation_{selected_case_id}"]:
+        
+        lime_explanation_list = st.session_state[f"lime_explanation_{selected_case_id}"]
+        for feature, weight in lime_explanation_list:
             st.write(f"- `{feature}`: `{weight:.4f}`")
+
+        # Visualization
+        st.markdown("---")
+        st.markdown("#### Visual Representation")
+        
+        # Prepare data for plotting
+        features_list = [exp[0] for exp in lime_explanation_list]
+        weights = [exp[1] for exp in lime_explanation_list]
+
+        # Create a DataFrame for easier plotting
+        lime_df = pd.DataFrame({
+            "Feature": features_list,
+            "Weight": weights
+        })
+        lime_df = lime_df.sort_values(by="Weight", ascending=False)
+
+        fig, ax = plt.subplots(figsize=(10, 6))
+        colors = ["red" if w < 0 else "green" for w in lime_df["Weight"]]
+        ax.barh(lime_df["Feature"], lime_df["Weight"], color=colors)
+        ax.set_xlabel("Contribution to Prediction")
+        ax.set_ylabel("Feature")
+        ax.set_title(f"LIME Feature Contributions for Applicant ID {selected_case_id}")
+        ax.axvline(0, color="grey", linestyle="--")
+        st.pyplot(fig)
+        plt.close(fig)
 
         st.markdown(
             """
             **How the underlying concept or AI method supports this action:** LIME works by creating a local, interpretable model (like a linear model)
             around the prediction of a single instance. It perturbs the instance's features and observes how the black-box model's prediction changes.
-            This allows us to attribute importance to features for *that specific decision*, which is critical for satisfying inquiries about individual cases.
+            This allows us to attribute importance to features for *that specific decision*. The visualization leverages bar charts to show directed feature importance,
+            with positive bars indicating features pushing towards "approved" and negative bars pushing towards "rejected". This visual mapping allows non-technical stakeholders,
+            like regulators or loan officers, to quickly understand the primary factors for a specific decision.
             """
         )
 
