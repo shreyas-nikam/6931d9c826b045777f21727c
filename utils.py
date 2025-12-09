@@ -117,7 +117,7 @@ def generate_human_readable_explanation(application_data, lime_explanation=None,
         explanation_text += "\n**LIME Insights (Local Feature Impact):**\n"
         # For simplicity, filter for top contributing features towards rejection/approval
         sorted_lime = sorted(
-            lime_explanation, key=lambda x: x[1], reverse=True)
+            lime_explanation, key=lambda x: x[1])
         top_positive = [f"{feat} ({weight:.2f})" for feat,
                         weight in sorted_lime if weight > 0][:3]
         top_negative = [f"{feat} ({weight:.2f})" for feat,
